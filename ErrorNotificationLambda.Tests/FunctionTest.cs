@@ -11,25 +11,32 @@ using ErrorNotificationLambda;
 
 namespace ErrorNotificationLambda.Tests
 {
-    public class FunctionTest
+    public class FunctionTest : IClassFixture<LaunchSettingsFixture>
     {
-        [Fact]
-        public void TestToUpperFunction()
+	    LaunchSettingsFixture _fixture;
+
+	    public FunctionTest(LaunchSettingsFixture fixture)
+	    {
+		    _fixture = fixture;
+	    }
+
+		[Fact]
+        public async void TestErrorNotificationFunction()
         {
-            var function = new Function();
+			var function = new Function();
             var context = new TestLambdaContext();
 
 	        var evnt = new LogEvent
 	        {
 		        Awslogs = new LogEvent.Log
 				{
-			        Data = "error!"
-		        }
+			        Data = "error!" + Environment.NewLine + "stackTrace at hogehogehogehoge"
+				}
 	        };
 
-			var notification = function.FunctionHandler(evnt, context);
+			var notification = await function.FunctionHandler(evnt, context);
 
-            Assert.Equal("error!", notification);
+            Assert.True(notification);
         }
     }
 }

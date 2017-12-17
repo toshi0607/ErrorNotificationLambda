@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ErrorNotificationLambda.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "SLACK_WEBHOOK_URL": "[YOUR URL]",
+        "CLOUDWATCH_LOG_GROUP_URL": "[YOUR URL]",
+        "CLOUDWATCH_METRICS_URL": "[YOUR URL]"
+      }
+    }
+  }
+}
