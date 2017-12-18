@@ -35,3 +35,40 @@ Slackに通知を行うときに使用する[Incoming Webhooks](https://api.slac
 **FunctionTest.csの**Propertiesフォルダにある`launciSettings.json`の`[YOUR URL]`部分を**本番環境**でセットしたものに書き換えてください。
 
 fixtureでローカル実行時に環境変数をセットするのに使用しています。
+
+## テストデータ
+CloudWatch Logsからは次のようなイベントがjsonで送られてきます。
+
+```json
+{
+  "awslogs": {
+    "data": "H4sIAAAAAAAAAHWPwQqCQBCGX0Xm7EFtK+smZBEUgXoLCdMhFtKV3akI8d0bLYmibvPPN3wz00CJxmQnTO41whwWQRIctmEcB6sQbFC3CjW3XW8kxpOpP+OC22d1Wml1qZkQGtoMsScxaczKN3plG8zlaHIta5KqWsozoTYw3/djzwhpLwivWFGHGpAFe7DL68JlBUk+l7KSN7tCOEJ4M3/qOI49vMHj+zCKdlFqLaU2ZHV2a4Ct/an0/ivdX8oYc1UVX860fQDQiMdxRQEAAA=="
+   }
+ }
+```
+
+これは元のログがgzipされ、Base64エンコードされたもので、元のログ（`data`内部）は次のような構造になっています。
+
+```json
+{
+  “messageType”:“DATA_MESSAGE”,
+  “owner”:“123456789123",
+  “logGroup”:“testLogGroup”,
+  “logStream”:“testLogStream”,
+  “subscriptionFilters”:[“testFilter”],
+  “logEvents”:
+    [
+      {
+        “id”:“eventId1”,
+        “timestamp”:1440442987000,
+        “message”:“[ERROR] First test message”
+      },
+      {
+        “id”:“eventId2",
+        “timestamp”:1440442987001,
+        “message”:“[ERROR] Second test message”
+      }
+    ]
+}
+```
+
