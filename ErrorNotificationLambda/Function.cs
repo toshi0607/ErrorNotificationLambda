@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text;
+using System.IO;
+using System.IO.Compression;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using Amazon.Lambda.Core;
 
@@ -16,7 +20,7 @@ namespace ErrorNotificationLambda
     {
 
 		/// <summary>
-		/// CloudWatch Logsに書き出された内容を通知する
+        /// Notify contents waritten out on CloudWatch Logs
 		/// </summary>
 		/// <param name="logEvent"></param>
 		/// <param name="context"></param>
@@ -30,8 +34,10 @@ namespace ErrorNotificationLambda
 			var payload = new
 			{
 				channel = "dev",
-				username = "通知奴",
-				text = $"{logEvent.Awslogs.Data}\nLogs: <{cloudWatchLogGroupUrl}|Click here>\nMetrics: <{cloudWatchMetricsUrl}|Click here>",
+				username = "CloudWatch Notification",
+                text = $"{Decode(logEvent.Awslogs.Data)}"+ Environment.NewLine +
+                       $"Logs: <{cloudWatchLogGroupUrl}|Click here>" + Environment.NewLine +
+                       $"Metrics: <{cloudWatchMetricsUrl}|Click here>",
 			};
 
 			var jsonString = JsonConvert.SerializeObject(payload);
@@ -56,6 +62,40 @@ namespace ErrorNotificationLambda
 			
 			return true;
 		}
+
+        private string Decode(string encodedString)
+        {
+            var decodedString = "";
+
+            byte[] data = Convert.FromBase64String(encodedString);
+
+            using (GZipStream stream = new GZipStream(new MemoryStream(data), CompressionMode.Decompress))
+            {
+                const int size = 4096;
+                byte[] buffer = new byte[size];
+                using (MemoryStream memory = new MemoryStream())
+                {
+                    int count = 0;
+                    do
+                    {
+                        count = stream.Read(buffer, 0, size);
+                        if (count > 0)
+                        {
+                            memory.Write(buffer, 0, count);
+                        }
+                    }
+                    while (count > 0);
+
+                    var messages = JObject.Parse(Encoding.UTF8.GetString(memory.ToArray())).GetValue("logEvents");
+                    foreach (var item in messages)
+                    {
+                        decodedString += item["message"].Value<string>() + Environment.NewLine;
+                    }
+                }
+            }
+
+            return decodedString;
+        }
 
     }
 
