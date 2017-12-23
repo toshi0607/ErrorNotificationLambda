@@ -70,7 +70,7 @@ namespace ErrorNotificationLambda
 		    {
 			    extractedMessage += item["message"].Value<string>() + Environment.NewLine;
 		    }
-			return extractedMessage;
+            return extractedMessage;
 	    }
 
     }
