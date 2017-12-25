@@ -51,22 +51,22 @@ CloudWatch Logsからは次のようなイベントがjsonで送られてきま�
 
 ```json
 {
-  “messageType”:“DATA_MESSAGE”,
-  “owner”:“123456789123",
-  “logGroup”:“testLogGroup”,
-  “logStream”:“testLogStream”,
-  “subscriptionFilters”:[“testFilter”],
-  “logEvents”:
+  "messageType":"DATA_MESSAGE",
+  "owner":"123456789123",
+  "logGroup":"testLogGroup",
+  "logStream":"testLogStream",
+  "subscriptionFilters":["testFilter"],
+  "logEvents":
     [
       {
-        “id”:“eventId1”,
-        “timestamp”:1440442987000,
-        “message”:“[ERROR] First test message”
+        "id":"eventId1",
+        "timestamp":1440442987000,
+        "message":"[ERROR] First test message"
       },
       {
-        “id”:“eventId2",
-        “timestamp”:1440442987001,
-        “message”:“[ERROR] Second test message”
+        "id":"eventId2",
+        "timestamp":1440442987001,
+        "message":"[ERROR] Second test message"
       }
     ]
 }
